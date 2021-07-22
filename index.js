@@ -178,7 +178,6 @@ const postImg = (buffer, id, i) => new Promise((resolve, reject) => {
 
 async function processCommand(message, id, token) {
     const upload = mongoose.model(`chatroom${id}`, schema)
-    const random = randomString(5)
     const maxCmd = 69
 
     if (message.toLowerCase() === 'bin tsundere mode on') {
@@ -230,27 +229,31 @@ async function processCommand(message, id, token) {
 
     if (amount == 1) {
         for (let i = 0; i < result.length; i++) {
+            const random = randomString(5)
+            let isi;
             if (text[i] != -1) {
                 let data = result[text[i]]
                 reply = reply.concat(data.sender + ': ' + data.message);
-
-                if (i != 0) {
-                    reply = reply.concat('\n\n------------\n\n');
+                isi = {
+                    type: "text",
+                    text: reply
                 }
+
             } else if (gambar[i] != -1) {
                 let data = result[gambar[i]]
-                await postImg(data.img, id, i)
-                const isi = {
+                await postImg(data.img, id, random)
+                isi = {
                     type: "image",
                     originalContentUrl: url + `gambar.jpg/${id}/${random}`,
                     previewImageUrl: url + `gambar.jpg/${id}/${random}`
 
                 }
-                await client.replyMessage(token, isi)
             }
+            await client.replyMessage(token, isi)
         }
     } else {
         for (let i = 0; i < result.length; i++) {
+            const random = randomString(5)
             if (text[i] - 1 == text[i + 1]) {
                 let data = result[text[i]]
                 reply = reply.concat(data.sender + ': ' + data.message);
@@ -263,7 +266,7 @@ async function processCommand(message, id, token) {
                 }
             } else {
                 let data = result[gambar[i]]
-                await postImg(data.img, id, i)
+                await postImg(data.img, id, random)
                 reply = reply.concat(data.sender + ': ' + url + `gambar.jpg/${id}/${random}`)
                 if (i != result.length - 1) {
                     reply = reply.concat('\n\n------------\n\n');
