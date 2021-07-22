@@ -63,6 +63,16 @@ app.post('/linebot', (req, res) => {
         });
 });
 
+const random = (length) => {
+    let result = '';
+    const characters = '12314567890';
+    const charactersLength = characters.length;
+    for (let i = 0; i < length; i++) {
+        result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
+}
+
 async function handleEvent(event) {
     let chatId = ""
     let timestamp = event.timestamp;
@@ -170,6 +180,7 @@ const postImg = (buffer, id, i) => new Promise((resolve, reject) => {
 
 async function processCommand(message, id, token) {
     const upload = mongoose.model(`chatroom${id}`, schema)
+    const random = random(5)
 
     if (message.toLowerCase() === 'bin tsundere mode on') {
         const isi = {
@@ -232,8 +243,8 @@ async function processCommand(message, id, token) {
                 await postImg(data.img, id, i)
                 const isi = {
                     type: "image",
-                    originalContentUrl: url + `gambar.jpg/${id}/${i}`,
-                    previewImageUrl: url + `gambar.jpg/${id}/${i}`
+                    originalContentUrl: url + `gambar.jpg/${id}/${random}`,
+                    previewImageUrl: url + `gambar.jpg/${id}/${random}`
 
                 }
                 await client.replyMessage(token, isi)
@@ -254,7 +265,7 @@ async function processCommand(message, id, token) {
             } else {
                 let data = result[gambar[i]]
                 await postImg(data.img, id, i)
-                reply = reply.concat(data.sender + ': ' + url + `gambar.jpg/${id}/${i}`)
+                reply = reply.concat(data.sender + ': ' + url + `gambar.jpg/${id}/${random}`)
                 if (i != result.length - 1) {
                     reply = reply.concat('\n\n------------\n\n');
                 }
