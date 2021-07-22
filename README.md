@@ -6,6 +6,9 @@ Bot ini diciptakan untuk memerangi unsend di Line yang dipelopori oleh Salsa set
 #### Add bot
 ID @190rivzu
 
+#### QR Code
+![190rivzu](https://user-images.githubusercontent.com/77542170/126722817-ee11a5ee-ee4e-42f7-8f35-279bf5614c37.png)
+
 #### Command
 bin [number of messages]
 
