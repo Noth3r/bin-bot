@@ -5,6 +5,7 @@ const dotenv = require("dotenv");
 const fs = require('fs');
 const bp = require('body-parser');
 const fetch = require('node-fetch');
+const delay = require('delay');
 dotenv.config();
 const url = process.env.URL
 
@@ -67,8 +68,6 @@ async function handleEvent(event) {
     let timestamp = event.timestamp;
     let id = '';
 
-  console.log(event)
-
     switch (event.source.type) {
         case 'user':
             id = event.source.userId;
@@ -81,17 +80,15 @@ async function handleEvent(event) {
             break;
     }
 
-    console.log(event.source.userId)
     const upload = mongoose.model(`chatroom${id}`, schema)
     let userData;
     try {
-     userData = await client.getProfile(event.source.userId)
+        userData = await client.getProfile(event.source.userId)
     } catch (e) {
-      userData = {
-        displayName: "Belum Add Bot"
+        userData = {
+            displayName: "Belum Add Bot"
         }
     }
-    console.log(userData)
     if (event.message.type === "image") {
         chatId = event.message.id
     }
@@ -154,8 +151,10 @@ function isCommand(text) {
     return true;
 }
 
-const postImg = (buffer) => new Promise((resolve, reject) => {
+const postImg = (buffer, id, i) => new Promise((resolve, reject) => {
     const boday = {
+        id: id,
+        i: i,
         buffer: buffer
     }
     const ur = url + "post"
@@ -168,6 +167,14 @@ const postImg = (buffer) => new Promise((resolve, reject) => {
     }).then(res => resolve(res.text()))
 });
 
+const deleteImg = (id, i) => new Promise((resolve, reject) => {
+    const ur = url + "delete/" + id + "/" + i
+    fetch(ur, {
+            method: "GET"
+        })
+        .then(res => resolve(res.text()))
+        .catch(e => reject(e))
+})
 
 async function processCommand(message, id, token) {
     const upload = mongoose.model(`chatroom${id}`, schema)
@@ -230,14 +237,16 @@ async function processCommand(message, id, token) {
                 await client.pushMessage(id, isi)
             } else if (gambar[i] != -1) {
                 let data = result[gambar[i]]
-                await postImg(data.img)
+                await postImg(data.img, id, i)
                 const isi = {
                     type: "image",
-                    originalContentUrl: url + "gambar.jpg",
-                    previewImageUrl: url + "gambar.jpg"
+                    originalContentUrl: url + `gambar.jpg/${id}/${i}`,
+                    previewImageUrl: url + `gambar.jpg/${id}/${i}`
 
                 }
                 await client.pushMessage(id, isi)
+                await delay(1000)
+                await deleteImg(id, i)
             }
 
         }
@@ -260,14 +269,17 @@ async function processCommand(message, id, token) {
                     reply = ""
                 }
                 let data = result[gambar[i]]
-                await postImg(data.img)
+                await postImg(data.img, id, i)
+
                 const isi2 = {
                     type: "image",
-                    originalContentUrl: url + "gambar.jpg",
-                    previewImageUrl: url + "gambar.jpg"
+                    originalContentUrl: url + `gambar.jpg/${id}/${i}`,
+                    previewImageUrl: url + `gambar.jpg/${id}/${i}`
 
                 }
                 await client.pushMessage(id, isi2)
+                await delay(1000)
+                await deleteImg(id, i)
             }
         }
         if (reply) {
