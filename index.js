@@ -67,6 +67,7 @@ async function handleEvent(event) {
     let chatId = ""
     let timestamp = event.timestamp;
     let id = '';
+    let token = event.replyToken
 
     switch (event.source.type) {
         case 'user':
@@ -119,7 +120,7 @@ async function handleEvent(event) {
     let message = event.message.text;
     if (event.message.type === "text") {
         if (isCommand(message)) {
-            let reply = await processCommand(message, id);
+            let reply = await processCommand(message, id, token);
             return Promise.resolve(null)
         }
         const mantap = await new upload({
@@ -167,15 +168,6 @@ const postImg = (buffer, id, i) => new Promise((resolve, reject) => {
     }).then(res => resolve(res.text()))
 });
 
-const deleteImg = (id, i) => new Promise((resolve, reject) => {
-    const ur = url + "delete/" + id + "/" + i
-    fetch(ur, {
-            method: "GET"
-        })
-        .then(res => resolve(res.text()))
-        .catch(e => reject(e))
-})
-
 async function processCommand(message, id, token) {
     const upload = mongoose.model(`chatroom${id}`, schema)
 
@@ -184,7 +176,7 @@ async function processCommand(message, id, token) {
             type: "text",
             text: 'It\'s not like I wanted to follow your order or something you baka >_<'
         }
-        await client.pushMessage(id, isi)
+        await client.replyMessage(token, isi)
         return;
     }
 
@@ -235,11 +227,6 @@ async function processCommand(message, id, token) {
                 if (i != 0) {
                     reply = reply.concat('\n\n------------\n\n');
                 }
-                const isi = {
-                    type: "text",
-                    text: reply
-                }
-                await client.pushMessage(id, isi)
             } else if (gambar[i] != -1) {
                 let data = result[gambar[i]]
                 await postImg(data.img, id, i)
@@ -249,11 +236,8 @@ async function processCommand(message, id, token) {
                     previewImageUrl: url + `gambar.jpg/${id}/${i}`
 
                 }
-                await client.pushMessage(id, isi)
-                await delay(1000)
-                await deleteImg(id, i)
+                await client.replyMessage(token, isi)
             }
-
         }
     } else {
         for (let i = 0; i < result.length; i++) {
@@ -264,35 +248,24 @@ async function processCommand(message, id, token) {
             } else if (text[i] != -1 && (text[i + 1] == undefined || text[i + 1] == -1)) {
                 let data = result[text[i]]
                 reply = reply.concat(data.sender + ': ' + data.message);
-            } else {
-                if (reply) {
-                    const isi = {
-                        type: "text",
-                        text: reply
-                    }
-                    await client.pushMessage(id, isi)
-                    reply = ""
+                if (i != result.length - 1) {
+                    reply = reply.concat('\n\n------------\n\n');
                 }
+            } else {
                 let data = result[gambar[i]]
                 await postImg(data.img, id, i)
-
-                const isi2 = {
-                    type: "image",
-                    originalContentUrl: url + `gambar.jpg/${id}/${i}`,
-                    previewImageUrl: url + `gambar.jpg/${id}/${i}`
-
+                reply = reply.concat(data.sender + ': ' + url + `gambar.jpg/${id}/${i}`)
+                if (i != result.length - 1) {
+                    reply = reply.concat('\n\n------------\n\n');
                 }
-                await client.pushMessage(id, isi2)
-                await delay(1000)
-                await deleteImg(id, i)
             }
         }
         if (reply) {
             const isi = {
                 type: "text",
-                text: reply
+                text: reply + "\n\n------------\nGambar Akan dihapus setelah 5 menit"
             }
-            await client.pushMessage(id, isi)
+            await client.replyMessage(token, isi)
             reply = ""
         }
     }
