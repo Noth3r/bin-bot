@@ -1,0 +1,9 @@
+.env
+node_modules/
+package-lock.json
+gambar.jpg
+views/
+tesexpress.js
+tespost.js
+testdb.js
+testfetch.js
