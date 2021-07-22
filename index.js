@@ -67,6 +67,7 @@ async function handleEvent(event) {
     let timestamp = event.timestamp;
     let id = '';
 
+  console.log(event)
 
     switch (event.source.type) {
         case 'user':
@@ -80,11 +81,17 @@ async function handleEvent(event) {
             break;
     }
 
-
+    console.log(event.source.userId)
     const upload = mongoose.model(`chatroom${id}`, schema)
-
-    let userData = await client.getProfile(event.source.userId)
-
+    let userData;
+    try {
+     userData = await client.getProfile(event.source.userId)
+    } catch (e) {
+      userData = {
+        displayName: "Belum Add Bot"
+        }
+    }
+    console.log(userData)
     if (event.message.type === "image") {
         chatId = event.message.id
     }
