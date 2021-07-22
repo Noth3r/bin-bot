@@ -2,10 +2,8 @@ const mongoose = require('mongoose');
 const line = require("@line/bot-sdk");
 const express = require("express");
 const dotenv = require("dotenv");
-const fs = require('fs');
 const bp = require('body-parser');
 const fetch = require('node-fetch');
-const delay = require('delay');
 dotenv.config();
 const url = process.env.URL
 
@@ -63,9 +61,9 @@ app.post('/linebot', (req, res) => {
         });
 });
 
-const random = (length) => {
+const randomString = (length) => {
     let result = '';
-    const characters = '12314567890';
+    const characters = 'abcdefghijklmnopqrstuvwxyz12314567890';
     const charactersLength = characters.length;
     for (let i = 0; i < length; i++) {
         result += characters.charAt(Math.floor(Math.random() * charactersLength));
@@ -180,7 +178,8 @@ const postImg = (buffer, id, i) => new Promise((resolve, reject) => {
 
 async function processCommand(message, id, token) {
     const upload = mongoose.model(`chatroom${id}`, schema)
-    const random = random(5)
+    const random = randomString(5)
+    const maxCmd = 69
 
     if (message.toLowerCase() === 'bin tsundere mode on') {
         const isi = {
@@ -194,8 +193,8 @@ async function processCommand(message, id, token) {
     let amount = 10;
     let x = message.split(' ')[message.split(' ').length - 1];
     if (x > 0) {
-        if (x > 69) {
-            amount = 69;
+        if (x > maxCmd) {
+            amount = maxCmd;
         } else {
             amount = parseInt(x);
         }
@@ -278,6 +277,22 @@ async function processCommand(message, id, token) {
             }
             await client.replyMessage(token, isi)
             reply = ""
+        }
+    }
+    const penuh = await upload.find().sort({
+        createdAt: 1
+    })
+
+    if (penuh.length > maxCmd) {
+        for (let i = 0; i < penuh.length; i++) {
+            const id = penuh[i]._id
+            await upload.deleteOne({
+                _id: id
+            })
+            const cek = await upload.find()
+            if (cek.length <= maxCmd) {
+                break
+            }
         }
     }
 
