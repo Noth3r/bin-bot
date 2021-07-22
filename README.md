@@ -14,7 +14,8 @@ bin [number of messages]
 * Support for image messages | DONE
 * Change from firebase to mongodb
 
-### Upcoming features
+### TODO
+* FIX BUG
 * Repo kode nuklir
 * Support for sticker 
 
