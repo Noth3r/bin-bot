@@ -180,7 +180,12 @@ async function processCommand(message, id, token) {
     const upload = mongoose.model(`chatroom${id}`, schema)
 
     if (message.toLowerCase() === 'bin tsundere mode on') {
-        return 'It\'s not like I wanted to follow your order or something you baka >_<';
+        const isi = {
+            type: "text",
+            text: 'It\'s not like I wanted to follow your order or something you baka >_<'
+        }
+        await client.pushMessage(id, isi)
+        return;
     }
 
     let amount = 10;
