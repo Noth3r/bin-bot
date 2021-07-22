@@ -21,5 +21,5 @@ bin [number of messages]
 ### Images Preview
 BIN 1            |  BIN > 1
 :-------------------------:|:-------------------------:
-![](https://user-images.githubusercontent.com/77542170/126672814-eb82b103-947d-4a51-8b6f-11d18b79f264.png)  |  ![](https://user-images.githubusercontent.com/77542170/126672938-ebebca9f-eef0-4e80-903d-c3244a578369.jpg)
+![](https://user-images.githubusercontent.com/77542170/126672814-eb82b103-947d-4a51-8b6f-11d18b79f264.png)  |  ![](https://user-images.githubusercontent.com/77542170/126673915-52957b04-7dd4-4370-925e-21d774e43dfd.jpg)
 
