@@ -17,6 +17,7 @@ ID @190rivzu
 * Show sender display name | DONE
 * Support for image messages | DONE
 * Change from firebase to mongodb
+* Auto delete DB when limit reached
 
 #### TODO
 * FIX BUG
