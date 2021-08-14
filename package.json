@@ -9,10 +9,12 @@
   "author": "Ihsan Aryan",
   "license": "ISC",
   "dependencies": {
-    "mongoose": "^5.13.3",
     "@line/bot-sdk": "^7.3.0",
-    "express": "^4.17.1",
+    "delay": "^5.0.0",
     "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "fs-extra": "^10.0.0",
+    "mongoose": "^5.13.3",
     "node-fetch": "^2.6.1"
   }
 }
